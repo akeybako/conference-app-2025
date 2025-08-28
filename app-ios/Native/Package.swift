@@ -214,9 +214,6 @@ let package = Package(
                 .target(name: "Theme"),
             ],
             path: "Sources/Feature/ProfileCard",
-            resources: [
-                .process("Resources")
-            ],
         ),
 
         .target(
