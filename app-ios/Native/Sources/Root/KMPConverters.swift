@@ -395,12 +395,230 @@ extension Model.EventMapEvent {
     }
 }
 
+// MARK: - Profile Converters
+
+extension Model.ProfileCardVariant {
+    init(from shared: shared.ProfileCardTheme) {
+        switch shared {
+        case .darkPill:
+            self = .nightPill
+        case .lightPill:
+            self = .dayPill
+        case .darkDiamond:
+            self = .nightDiamond
+        case .lightDiamond:
+            self = .dayDiamond
+        case .darkFlower:
+            self = .nightFlower
+        case .lightFlower:
+            self = .dayFlower
+        default:
+            self = .nightPill
+        }
+    }
+}
+
+extension shared.ProfileCardTheme {
+    init(from ios: Model.ProfileCardVariant) {
+        switch ios {
+        case .nightPill:
+            self = .darkPill
+        case .dayPill:
+            self = .lightPill
+        case .nightDiamond:
+            self = .darkDiamond
+        case .dayDiamond:
+            self = .lightDiamond
+        case .nightFlower:
+            self = .darkFlower
+        case .dayFlower:
+            self = .lightFlower
+        }
+    }
+}
+
+extension Model.Profile {
+    init?(from profileWithImages: shared.ProfileWithImages) {
+        print("[ProfileCardDebug] Model.Profile: init(from profileWithImages) called")
+        print("[ProfileCardDebug] Model.Profile: profileWithImages = \(profileWithImages)")
+        print("[ProfileCardDebug] Model.Profile: profileWithImages.profile = \(profileWithImages.profile)")
+        print("[ProfileCardDebug] Model.Profile: profileWithImages.profileImageByteArray = \(profileWithImages.profileImageByteArray)")
+        guard let profile = profileWithImages.profile else { 
+            print("[ProfileCardDebug] Model.Profile: profileWithImages.profile is nil, returning nil")
+            return nil 
+        }
+        print("[ProfileCardDebug] Model.Profile: Found profile with nickName: \(profile.nickName)")
+        
+        // Use profileImageByteArray if available, otherwise try to load from imagePath
+        var imageData: Data
+        // For now, prioritize loading from imagePath to avoid ByteArray conversion issues
+        if let loadedData = loadImageDataFromFile(profile.imagePath) {
+            imageData = loadedData
+        } else if let imageBytes = profileWithImages.profileImageByteArray {
+            // Convert KotlinByteArray to Data by copying bytes
+            var bytes: [UInt8] = []
+            for i in 0..<imageBytes.size {
+                bytes.append(UInt8(imageBytes.get(index: i)))
+            }
+            imageData = Data(bytes)
+        } else {
+            // Use empty data as fallback
+            imageData = Data()
+        }
+        
+        guard let url = URL(string: profile.link.isEmpty ? "https://example.com" : profile.link) else {
+            return nil
+        }
+        
+        self.init(
+            name: profile.nickName,
+            occupation: profile.occupation,
+            url: url,
+            image: imageData,
+            cardVariant: Model.ProfileCardVariant(from: profile.theme)
+        )
+    }
+}
+
+extension shared.Profile {
+    static func create(from ios: Model.Profile) -> shared.Profile {
+        let imagePath = saveImageDataToFile(ios.image)
+        
+        return shared.Profile(
+            nickName: ios.name,
+            occupation: ios.occupation,
+            link: ios.url.absoluteString,
+            imagePath: imagePath,
+            theme: shared.ProfileCardTheme(from: ios.cardVariant)
+        )
+    }
+}
+
 // MARK: - Helper Extensions
 
 extension shared.KotlinInstant {
     var date: Date {
         Date(timeIntervalSince1970: TimeInterval(epochSeconds))
     }
+}
+
+// MARK: - Profile UserDefaults Extension for Migration
+
+extension Model.Profile {
+    init?(userDefaults: UserDefaults) {
+        guard let name = userDefaults.string(forKey: "name"),
+            let occupation = userDefaults.string(forKey: "occupation"),
+            let urlString = userDefaults.string(forKey: "url"),
+            let url = URL(string: urlString),
+            let imageData = userDefaults.data(forKey: "image"),
+            let cardVariantString = userDefaults.string(forKey: "cardVariant"),
+            let cardVariant = Model.ProfileCardVariant(rawValue: cardVariantString)
+        else {
+            return nil
+        }
+
+        self.init(name: name, occupation: occupation, url: url, image: imageData, cardVariant: cardVariant)
+    }
+}
+
+// MARK: - Profile Image Management Utilities
+
+private let profileImagesDirectory = "ProfileImages"
+private let migrationCompletedKey = "ProfileUserDefaultsToKMPMigrationCompleted"
+
+private func getProfileImagesDirectoryURL() -> URL? {
+    guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+        return nil
+    }
+    let profileImagesURL = documentsURL.appendingPathComponent(profileImagesDirectory)
+    
+    // Create directory if it doesn't exist
+    if !FileManager.default.fileExists(atPath: profileImagesURL.path) {
+        try? FileManager.default.createDirectory(at: profileImagesURL, withIntermediateDirectories: true)
+    }
+    
+    return profileImagesURL
+}
+
+private func saveImageDataToFile(_ imageData: Data) -> String {
+    guard let profileImagesURL = getProfileImagesDirectoryURL() else {
+        return ""
+    }
+    
+    let fileName = "profile_\(UUID().uuidString).jpg"
+    let fileURL = profileImagesURL.appendingPathComponent(fileName)
+    
+    do {
+        try imageData.write(to: fileURL)
+        return fileURL.path
+    } catch {
+        // Use os_log instead of print for better logging
+        return ""
+    }
+}
+
+private func loadImageDataFromFile(_ filePath: String) -> Data? {
+    guard !filePath.isEmpty else { return nil }
+    return try? Data(contentsOf: URL(fileURLWithPath: filePath))
+}
+
+// MARK: - Migration Utilities
+
+public func migrateProfileFromUserDefaultsToKMP() async -> Bool {
+    print("[ProfileCardDebug] Migration: Starting migration check")
+    
+    // TEMPORARY: Reset migration status for debugging
+    UserDefaults.standard.set(false, forKey: migrationCompletedKey)
+    print("[ProfileCardDebug] Migration: Reset migration status for debugging")
+    
+    // Check if migration has already been completed
+    if UserDefaults.standard.bool(forKey: migrationCompletedKey) {
+        print("[ProfileCardDebug] Migration: Already completed, skipping")
+        return true
+    }
+    
+    // Check if there's existing profile data in UserDefaults
+    print("[ProfileCardDebug] Migration: Checking for existing UserDefaults data")
+    guard let existingProfile = Model.Profile(userDefaults: UserDefaults.standard) else {
+        print("[ProfileCardDebug] Migration: No existing data found, marking as completed")
+        // No existing data to migrate, mark as completed
+        UserDefaults.standard.set(true, forKey: migrationCompletedKey)
+        return true
+    }
+    print("[ProfileCardDebug] Migration: Found existing profile: \(existingProfile.name)")
+    
+    do {
+        print("[ProfileCardDebug] Migration: Converting iOS Profile to KMP Profile")
+        // Convert iOS Profile to KMP Profile and save
+        let kmpProfile = shared.Profile.create(from: existingProfile)
+        print("[ProfileCardDebug] Migration: Created KMP profile with nickName: \(kmpProfile.nickName)")
+        print("[ProfileCardDebug] Migration: Saving to KMP repository")
+        try await KMPDependencyProvider.shared.appGraph.profileRepository.save(profile: kmpProfile)
+        print("[ProfileCardDebug] Migration: Save completed successfully")
+        
+        // Mark migration as completed
+        UserDefaults.standard.set(true, forKey: migrationCompletedKey)
+        print("[ProfileCardDebug] Migration: Marked as completed")
+        
+        // Clear old UserDefaults data (optional - could keep as backup)
+        // clearUserDefaultsProfileData()
+        
+        // Migration completed successfully
+        return true
+    } catch {
+        print("[ProfileCardDebug] Migration: Failed with error: \(error)")
+        // Migration failed - can be retried later
+        return false
+    }
+}
+
+private func clearUserDefaultsProfileData() {
+    let userDefaults = UserDefaults.standard
+    userDefaults.removeObject(forKey: "name")
+    userDefaults.removeObject(forKey: "occupation")  
+    userDefaults.removeObject(forKey: "url")
+    userDefaults.removeObject(forKey: "image")
+    userDefaults.removeObject(forKey: "cardVariant")
 }
 
 // MARK: - Utility Functions

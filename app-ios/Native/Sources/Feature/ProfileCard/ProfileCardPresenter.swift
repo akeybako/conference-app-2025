@@ -71,7 +71,9 @@ final class ProfileCardPresenter {
     }
 
     func loadInitial() {
+        print("[ProfileCardDebug] ProfileCardPresenter: loadInitial() called")
         profile.subscribeProfileIfNeeded()
+        print("[ProfileCardDebug] ProfileCardPresenter: loadInitial() completed")
     }
 
     func shareProfileCard() {

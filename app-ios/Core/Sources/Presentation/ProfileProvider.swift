@@ -18,16 +18,30 @@ public final class ProfileProvider {
 
     @MainActor
     public func subscribeProfileIfNeeded() {
-        guard fetchProfile == nil else { return }
+        print("[ProfileCardDebug] ProfileProvider: subscribeProfileIfNeeded() called")
+        guard fetchProfile == nil else { 
+            print("[ProfileCardDebug] ProfileProvider: fetchProfile already exists, returning")
+            return 
+        }
 
+        print("[ProfileCardDebug] ProfileProvider: Setting isLoading = true")
         isLoading = true
 
+        print("[ProfileCardDebug] ProfileProvider: Starting profile loading task")
         self.fetchProfile = Task {
-            for await profile in profileUseCase.load() {
-                self.profile = profile
+            print("[ProfileCardDebug] ProfileProvider: Inside profile loading task")
+            do {
+                for await profile in profileUseCase.load() {
+                    print("[ProfileCardDebug] ProfileProvider: Received profile: \(profile?.name ?? "nil")")
+                    self.profile = profile
+                    self.isLoading = false
+                }
+            } catch {
+                print("[ProfileCardDebug] ProfileProvider: Error loading profile: \(error)")
                 self.isLoading = false
             }
         }
+        print("[ProfileCardDebug] ProfileProvider: Task created")
     }
 
     @MainActor
