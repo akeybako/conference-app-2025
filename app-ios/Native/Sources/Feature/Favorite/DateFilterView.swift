@@ -3,6 +3,7 @@ import SwiftUI
 import Theme
 
 struct DateFilterView: View {
+
     @Binding private var selectedDate: FavoriteDateFilter
 
     init(selectedDate: Binding<FavoriteDateFilter>) {

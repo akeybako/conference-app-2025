@@ -100,6 +100,6 @@ struct TiltFlipCard<Front: View, Back: View>: View {
 
 extension SIMD4 where Scalar == Float {
     fileprivate var xyz: SIMD3<Float> {
-        SIMD3<Float>(x, y, z)
+        return SIMD3<Float>(x, y, z)
     }
 }

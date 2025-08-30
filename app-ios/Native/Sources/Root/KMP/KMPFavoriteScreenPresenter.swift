@@ -6,6 +6,7 @@ import shared
 @MainActor
 @Observable
 final class KMPFavoriteScreenPresenter: @preconcurrency FavoritePresenterProtocol {
+
     @ObservationIgnored
     private var fetchTask: Task<Void, Never>?
     @ObservationIgnored
@@ -52,12 +53,12 @@ final class KMPFavoriteScreenPresenter: @preconcurrency FavoritePresenterProtoco
     private func mapTimetableTimeGroupItems(
         _ list: shared.FavoritesFavoritesScreenUiStateTimetableContentStateFavoriteList
     ) -> [TimetableTimeGroupItems] {
-        list.timetableItemMap.map { key, value in
+        return list.timetableItemMap.map { key, value in
             .init(
                 startsTimeString: key.startTimeString,
                 endsTimeString: key.endTimeString,
                 items: value.map { item in
-                    .init(
+                    return .init(
                         timetableItem: mapTimetableItem(item),
                         isFavorited: true
                     )

@@ -94,7 +94,7 @@ struct TimetableGridView: View {
             TimetableGridCard(
                 timetableItem: lunchItem.timetableItem,
                 cellCount: rooms.count,
-                onTap: { _ in
+                onTap: { item in
                     onItemTap(lunchItem)
                 }
             )
