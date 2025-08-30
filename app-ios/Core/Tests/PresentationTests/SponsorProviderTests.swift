@@ -234,4 +234,3 @@ enum TestSponsorData {
             plan: plan
         )
     }
-}

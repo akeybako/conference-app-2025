@@ -83,17 +83,9 @@ struct FrontCard: View {
     }
 
     private var avatarImage: some View {
-        Group {
-            if let uiImage = UIImage(data: image) {
-                Image(uiImage: uiImage)
-                    .resizable()
-            } else {
-                // Fallback to a placeholder image or icon when image data is empty
-                Image(systemName: "person.circle.fill")
-                    .resizable()
-            }
-        }
-        .frame(width: 131, height: 131)
-        .foregroundColor(.accentColor)
+        Image(uiImage: UIImage(data: image)!)
+            .resizable()
+            .frame(width: 131, height: 131)
+            .foregroundColor(.accentColor)
     }
 }

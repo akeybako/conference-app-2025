@@ -43,14 +43,10 @@ class FormState {
             fatalError("Failed to load image data")
         }
 
-        guard let url = URL(string: urlString) else {
-            throw URLError(.badURL)
-        }
-
         return Profile(
             name: name,
             occupation: occupation,
-            url: url,
+            url: URL(string: urlString)!,
             image: imageData,
             cardVariant: cardVariant
         )
@@ -97,18 +93,12 @@ final class ProfileCardPresenter {
 
     @MainActor
     func createCard() {
-        guard formState.validate() else {
-            return
-        }
+        if !formState.validate() { return }
 
         Task {
-            do {
-                let profileData = try await formState.createProfile()
-                profile.saveProfile(profileData)
-                self.isEditing = false
-            } catch {
-                print("Failed to create profile: \(error)")
-            }
+            let profileData = try await formState.createProfile()
+            profile.saveProfile(profileData)
+            self.isEditing = false
         }
     }
 
