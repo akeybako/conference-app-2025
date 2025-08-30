@@ -95,11 +95,12 @@ public struct ProfileCardScreen: View {
     private var shareButton: some View {
         Group {
             if let profile = presenter.profile.profile,
-               let uiImage = OGPProfileShareImage(profile: profile).render(),
-               let ogpImage = uiImage.pngData() {
+                let uiImage = OGPProfileShareImage(profile: profile).render(),
+                let ogpImage = uiImage.pngData()
+            {
                 let shareText = String(localized: "Share Message", bundle: .module)
                 ShareLink(
-                    item: ShareOGPItem(ogpImage: ogpImage), 
+                    item: ShareOGPItem(ogpImage: ogpImage),
                     message: Text(shareText),
                     preview: SharePreview(shareText, image: Image(uiImage: uiImage))
                 ) {
