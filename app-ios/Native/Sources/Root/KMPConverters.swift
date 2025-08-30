@@ -403,6 +403,81 @@ extension shared.KotlinInstant {
     }
 }
 
+// MARK: - Profile Converters
+
+extension Model.Profile {
+    init?(from shared: shared.ProfileWithImages) {
+        guard let sharedProfile = shared.profile else { 
+            return nil 
+        }
+        
+        guard let url = URL(string: sharedProfile.link.isEmpty ? "https://example.com" : sharedProfile.link) else {
+            return nil
+        }
+        
+        // TODO: Implement proper ByteArray to Data conversion
+        let imageData = Data()
+        
+        self.init(
+            name: sharedProfile.nickName,
+            occupation: sharedProfile.occupation,
+            url: url,
+            image: imageData,
+            cardVariant: Model.ProfileCardVariant(from: sharedProfile.theme)
+        )
+    }
+}
+
+
+extension Model.ProfileCardVariant {
+    init(from shared: shared.ProfileCardTheme) {
+        switch shared {
+        case .darkPill:
+            self = .nightPill
+        case .lightPill:
+            self = .dayPill
+        case .darkDiamond:
+            self = .nightDiamond
+        case .lightDiamond:
+            self = .dayDiamond
+        case .darkFlower:
+            self = .nightFlower
+        case .lightFlower:
+            self = .dayFlower
+        default:
+            self = .nightPill
+        }
+    }
+}
+
+extension shared.Profile {
+    static func createKmpProfile(from swift: Model.Profile) -> shared.Profile {
+        let theme: shared.ProfileCardTheme
+        switch swift.cardVariant {
+        case .nightPill:
+            theme = shared.ProfileCardTheme.darkPill
+        case .dayPill:
+            theme = shared.ProfileCardTheme.lightPill  
+        case .nightDiamond:
+            theme = shared.ProfileCardTheme.darkDiamond
+        case .dayDiamond:
+            theme = shared.ProfileCardTheme.lightDiamond
+        case .nightFlower:
+            theme = shared.ProfileCardTheme.darkFlower
+        case .dayFlower:
+            theme = shared.ProfileCardTheme.lightFlower
+        }
+        
+        return shared.Profile(
+            nickName: swift.name,
+            occupation: swift.occupation,
+            link: swift.url.absoluteString,
+            imagePath: "",
+            theme: theme
+        )
+    }
+}
+
 // MARK: - Utility Functions
 
 public func defaultLang() -> Model.Lang {

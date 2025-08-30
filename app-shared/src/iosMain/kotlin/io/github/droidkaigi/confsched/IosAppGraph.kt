@@ -35,6 +35,7 @@ import io.github.droidkaigi.confsched.data.eventmap.DefaultEventMapQueryKey
 import io.github.droidkaigi.confsched.data.eventmap.EventMapApiClient
 import io.github.droidkaigi.confsched.data.profile.DefaultProfileMutationKey
 import io.github.droidkaigi.confsched.data.profile.DefaultProfileSubscriptionKey
+import io.github.droidkaigi.confsched.data.profile.ProfileDataStore
 import io.github.droidkaigi.confsched.data.sessions.DefaultSessionsApiClient
 import io.github.droidkaigi.confsched.data.sessions.DefaultTimetableItemQueryKey
 import io.github.droidkaigi.confsched.data.sessions.DefaultTimetableQueryKey
@@ -111,6 +112,7 @@ interface IosAppGraph : AppGraph {
     val settingsRepository: SettingsRepository
     val eventMapRepository: EventMapRepository
     val profileRepository: ProfileRepository
+    val profileDataStore: ProfileDataStore
 
     @Provides
     @ApiBaseUrl
