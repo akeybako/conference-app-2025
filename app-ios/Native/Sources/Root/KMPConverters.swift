@@ -415,8 +415,13 @@ extension Model.Profile {
             return nil
         }
 
-        // TODO: Implement proper ByteArray to Data conversion
-        let imageData = Data()
+        // Convert KMP ByteArray to Swift Data
+        let imageData: Data
+        if let byteArray = shared.profileImageByteArray {
+            imageData = convertKotlinByteArrayToData(byteArray)
+        } else {
+            imageData = Data()
+        }
 
         self.init(
             name: sharedProfile.nickName,
@@ -467,14 +472,62 @@ extension shared.Profile {
             theme = shared.ProfileCardTheme.lightFlower
         }
 
+        // Save image data to file and get the path
+        let imagePath = saveImageDataToFile(swift.image)
+
         return shared.Profile(
             nickName: swift.name,
             occupation: swift.occupation,
             link: swift.url.absoluteString,
-            imagePath: "",
+            imagePath: imagePath,
             theme: theme
         )
     }
+
+    private static func saveImageDataToFile(_ imageData: Data) -> String {
+        // Skip saving empty data
+        guard !imageData.isEmpty else { return "" }
+
+        // Create documents directory path for profile images
+        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let profileImagesDirectory = documentsPath.appendingPathComponent("ProfileImages")
+
+        // Create directory if it doesn't exist
+        do {
+            try FileManager.default.createDirectory(
+                at: profileImagesDirectory, withIntermediateDirectories: true, attributes: nil)
+        } catch {
+            print("Failed to create profile images directory: \(error)")
+            return ""
+        }
+
+        // Generate unique filename
+        let filename = "profile_\(UUID().uuidString).jpg"
+        let fileURL = profileImagesDirectory.appendingPathComponent(filename)
+
+        do {
+            // Write image data to file
+            try imageData.write(to: fileURL)
+            return fileURL.path
+        } catch {
+            print("Failed to save image data: \(error)")
+            return ""
+        }
+    }
+}
+
+// MARK: - ByteArray Conversion Functions
+
+private func convertKotlinByteArrayToData(_ byteArray: shared.KotlinByteArray) -> Data {
+    let size = Int(byteArray.size)
+    guard size > 0 else { return Data() }
+
+    var data = Data(capacity: size)
+    for i in 0..<size {
+        let byte = byteArray.get(index: Int32(i))
+        data.append(UInt8(bitPattern: byte))
+    }
+    return data
 }
 
 // MARK: - Utility Functions

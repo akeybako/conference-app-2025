@@ -5,25 +5,13 @@ import shared
 
 struct ProfileUseCaseImpl {
     func load() -> any AsyncSequence<Model.Profile?, Never> {
-        let profileDataStore = KMPDependencyProvider.shared.appGraph.profileDataStore
-        let profileFlow = profileDataStore.getProfileOrNull()
+        // Now that we have proper image file saving, we can use ProfileRepository.profileFlow()
+        // which provides ProfileWithImages including the image data
+        let profileRepository = KMPDependencyProvider.shared.appGraph.profileRepository
+        let profileFlow = profileRepository.profileFlow()
 
-        return profileFlow.map { kmpProfile in
-            guard let kmpProfile = kmpProfile else {
-                return nil
-            }
-
-            guard let url = URL(string: kmpProfile.link.isEmpty ? "https://example.com" : kmpProfile.link) else {
-                return nil
-            }
-
-            return Model.Profile(
-                name: kmpProfile.nickName,
-                occupation: kmpProfile.occupation,
-                url: url,
-                image: Data(),  // TODO: Handle image data properly
-                cardVariant: Model.ProfileCardVariant(from: kmpProfile.theme)
-            )
+        return profileFlow.map { profileWithImages in
+            return Model.Profile(from: profileWithImages)
         }
     }
 
