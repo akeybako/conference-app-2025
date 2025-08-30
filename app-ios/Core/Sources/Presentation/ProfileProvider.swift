@@ -32,13 +32,10 @@ public final class ProfileProvider {
 
     @MainActor
     public func saveProfile(_ profile: Profile) {
-        print("[ProfileProvider] saveProfile called with: \(profile.name)")
         Task {
             await profileUseCase.save(profile)
-            print("[ProfileProvider] saveProfile completed")
 
             // Force refresh after save by canceling current subscription and restarting
-            print("[ProfileProvider] Forcing profile refresh after save")
             fetchProfile?.cancel()
             fetchProfile = nil
             subscribeProfileIfNeeded()
