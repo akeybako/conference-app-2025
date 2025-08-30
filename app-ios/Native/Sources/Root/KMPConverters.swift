@@ -407,17 +407,17 @@ extension shared.KotlinInstant {
 
 extension Model.Profile {
     init?(from shared: shared.ProfileWithImages) {
-        guard let sharedProfile = shared.profile else { 
-            return nil 
+        guard let sharedProfile = shared.profile else {
+            return nil
         }
-        
+
         guard let url = URL(string: sharedProfile.link.isEmpty ? "https://example.com" : sharedProfile.link) else {
             return nil
         }
-        
+
         // TODO: Implement proper ByteArray to Data conversion
         let imageData = Data()
-        
+
         self.init(
             name: sharedProfile.nickName,
             occupation: sharedProfile.occupation,
@@ -427,7 +427,6 @@ extension Model.Profile {
         )
     }
 }
-
 
 extension Model.ProfileCardVariant {
     init(from shared: shared.ProfileCardTheme) {
@@ -457,7 +456,7 @@ extension shared.Profile {
         case .nightPill:
             theme = shared.ProfileCardTheme.darkPill
         case .dayPill:
-            theme = shared.ProfileCardTheme.lightPill  
+            theme = shared.ProfileCardTheme.lightPill
         case .nightDiamond:
             theme = shared.ProfileCardTheme.darkDiamond
         case .dayDiamond:
@@ -467,7 +466,7 @@ extension shared.Profile {
         case .dayFlower:
             theme = shared.ProfileCardTheme.lightFlower
         }
-        
+
         return shared.Profile(
             nickName: swift.name,
             occupation: swift.occupation,
