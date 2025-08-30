@@ -9,7 +9,7 @@ import Presentation
 final class TimetableDetailPresenter {
     struct Toast {
         var message: String
-        var action: (title: String, handler: () -> Void)? = nil
+        var action: (title: String, handler: () -> Void)?
     }
 
     let timetableItem: TimetableItemWithFavorite

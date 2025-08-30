@@ -10,6 +10,6 @@ public final class StaffProvider {
     public init() {}
 
     public func loadStaff() -> any AsyncSequence<[Staff], Never> {
-        return staffUseCase.load()
+        staffUseCase.load()
     }
 }

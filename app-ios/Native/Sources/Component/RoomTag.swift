@@ -30,11 +30,11 @@ public struct RoomTag: View {
     }
 
     private var surfaceColor: Color {
-        return isOn ? AssetColors.surface.swiftUIColor : room.roomTheme.primaryColor
+        isOn ? AssetColors.surface.swiftUIColor : room.roomTheme.primaryColor
     }
 
     private var backgroundColor: Color {
-        return isOn ? room.roomTheme.primaryColor : room.roomTheme.containerColor
+        isOn ? room.roomTheme.primaryColor : room.roomTheme.containerColor
     }
 }
 

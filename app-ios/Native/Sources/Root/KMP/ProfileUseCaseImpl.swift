@@ -5,13 +5,33 @@ import shared
 
 struct ProfileUseCaseImpl {
     func load() -> any AsyncSequence<Model.Profile?, Never> {
-        // Now that we have proper image file saving, we can use ProfileRepository.profileFlow()
-        // which provides ProfileWithImages including the image data
-        let profileRepository = KMPDependencyProvider.shared.appGraph.profileRepository
-        let profileFlow = profileRepository.profileFlow()
+        let profileDataStore = KMPDependencyProvider.shared.appGraph.profileDataStore
+        let profileFlow = profileDataStore.getProfileOrNull()
 
-        return profileFlow.map { profileWithImages in
-            return Model.Profile(from: profileWithImages)
+        return profileFlow.map { kmpProfile in
+            guard let kmpProfile = kmpProfile else {
+                return nil
+            }
+
+            guard let url = URL(string: kmpProfile.link.isEmpty ? "https://example.com" : kmpProfile.link) else {
+                return nil
+            }
+
+            // Load image data from file path
+            let imageData: Data
+            if !kmpProfile.imagePath.isEmpty {
+                imageData = loadImageDataFromFile(kmpProfile.imagePath)
+            } else {
+                imageData = Data()
+            }
+
+            return Model.Profile(
+                name: kmpProfile.nickName,
+                occupation: kmpProfile.occupation,
+                url: url,
+                image: imageData,
+                cardVariant: Model.ProfileCardVariant(from: kmpProfile.theme)
+            )
         }
     }
 
@@ -22,6 +42,16 @@ struct ProfileUseCaseImpl {
             try await profileDataStore.saveProfile(profile: kmpProfile)
         } catch {
             print("Failed to save profile: \(error)")
+        }
+    }
+
+    private func loadImageDataFromFile(_ filePath: String) -> Data {
+        let fileURL = URL(fileURLWithPath: filePath)
+        do {
+            return try Data(contentsOf: fileURL)
+        } catch {
+            print("Failed to load image from file \(filePath): \(error)")
+            return Data()
         }
     }
 }

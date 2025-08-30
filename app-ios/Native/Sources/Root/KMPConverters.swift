@@ -485,11 +485,13 @@ extension shared.Profile {
     }
 
     private static func saveImageDataToFile(_ imageData: Data) -> String {
-        // Skip saving empty data
         guard !imageData.isEmpty else { return "" }
 
         // Create documents directory path for profile images
-        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        guard let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            print("Failed to get documents directory")
+            return ""
+        }
         let profileImagesDirectory = documentsPath.appendingPathComponent("ProfileImages")
 
         // Create directory if it doesn't exist
@@ -506,7 +508,6 @@ extension shared.Profile {
         let fileURL = profileImagesDirectory.appendingPathComponent(filename)
 
         do {
-            // Write image data to file
             try imageData.write(to: fileURL)
             return fileURL.path
         } catch {

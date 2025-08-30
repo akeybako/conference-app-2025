@@ -35,8 +35,11 @@ public struct ProfileCardScreen: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 } else if presenter.shouldEditing {
                     editView
+                } else if let profile = profile {
+                    cardView(profile)
                 } else {
-                    cardView(profile!)
+                    Text("No profile data available")
+                        .foregroundColor(.secondary)
                 }
             }
             .padding(.bottom, 80)  // Tab bar padding
@@ -90,23 +93,39 @@ public struct ProfileCardScreen: View {
     }
 
     private var shareButton: some View {
-        let uiImage = OGPProfileShareImage(profile: presenter.profile.profile!).render()!
-        let ogpImage = uiImage.pngData()!
-        let shareText = String(localized: "Share Message", bundle: .module)
-
-        return ShareLink(
-            item: ShareOGPItem(ogpImage: ogpImage), message: Text(shareText),
-            preview: SharePreview(shareText, image: Image(uiImage: uiImage))
-        ) {
-            HStack {
-                AssetImages.icShare.swiftUIImage
-                    .resizable()
-                    .frame(width: 18, height: 18)
-                Text(String(localized: "Share", bundle: .module))
+        Group {
+            if let profile = presenter.profile.profile,
+               let uiImage = OGPProfileShareImage(profile: profile).render(),
+               let ogpImage = uiImage.pngData() {
+                let shareText = String(localized: "Share Message", bundle: .module)
+                ShareLink(
+                    item: ShareOGPItem(ogpImage: ogpImage), 
+                    message: Text(shareText),
+                    preview: SharePreview(shareText, image: Image(uiImage: uiImage))
+                ) {
+                    HStack {
+                        AssetImages.icShare.swiftUIImage
+                            .resizable()
+                            .frame(width: 18, height: 18)
+                        Text(String(localized: "Share", bundle: .module))
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .filledButtonStyle()
+            } else {
+                Button(action: {}) {
+                    HStack {
+                        AssetImages.icShare.swiftUIImage
+                            .resizable()
+                            .frame(width: 18, height: 18)
+                        Text(String(localized: "Share", bundle: .module))
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .filledButtonStyle()
+                .disabled(true)
             }
-            .frame(maxWidth: .infinity)
         }
-        .filledButtonStyle()
     }
 
     private var editButton: some View {
@@ -121,13 +140,13 @@ public struct ProfileCardScreen: View {
 }
 
 struct ShareOGPItem: Transferable {
+    let ogpImage: Data
+
     static var transferRepresentation: some TransferRepresentation {
-        DataRepresentation(exportedContentType: .png) { item in
-            item.ogpImage
+        DataRepresentation(contentType: .png) { shareOGP in
+            shareOGP.ogpImage
         }
     }
-
-    let ogpImage: Data
 }
 
 #Preview {
