@@ -35,9 +35,9 @@ import androidx.compose.ui.unit.sp
 import io.github.droidkaigi.confsched.designsystem.theme.LocalRoomTheme
 import io.github.droidkaigi.confsched.designsystem.theme.ProvideRoomTheme
 import io.github.droidkaigi.confsched.droidkaigiui.KaigiPreviewContainer
+import io.github.droidkaigi.confsched.droidkaigiui.SubcomposeAsyncImage
 import io.github.droidkaigi.confsched.droidkaigiui.extension.icon
 import io.github.droidkaigi.confsched.droidkaigiui.extension.roomTheme
-import io.github.droidkaigi.confsched.droidkaigiui.rememberAsyncImagePainter
 import io.github.droidkaigi.confsched.model.core.MultiLangText
 import io.github.droidkaigi.confsched.model.core.Room
 import io.github.droidkaigi.confsched.model.core.RoomType
@@ -170,11 +170,10 @@ private fun TimetableSpeaker(
     speaker: TimetableSpeaker,
     modifier: Modifier = Modifier,
 ) {
-    val painter = rememberAsyncImagePainter(speaker.iconUrl)
     val size = (TimetableGridItemDefaults.speakerHeight * scale).coerceAtLeast(16.dp)
     Row(modifier.height(size)) {
-        Image(
-            painter = painter,
+        SubcomposeAsyncImage(
+            model = speaker.iconUrl,
             contentDescription = null,
             modifier = Modifier
                 .size(size)
