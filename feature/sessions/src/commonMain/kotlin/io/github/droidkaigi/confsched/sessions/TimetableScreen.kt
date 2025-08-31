@@ -157,8 +157,8 @@ fun TimetableScreen(
                                 orientation = Orientation.Horizontal,
                                 state = rememberDraggableState { delta ->
                                     when (selectedDay) {
-                                        DroidKaigi2025Day.ConferenceDay1 if delta > ChangeTabDeltaThreshold -> onDaySelected(DroidKaigi2025Day.ConferenceDay2)
-                                        DroidKaigi2025Day.ConferenceDay2 if delta < -ChangeTabDeltaThreshold -> onDaySelected(DroidKaigi2025Day.ConferenceDay1)
+                                        DroidKaigi2025Day.ConferenceDay1 if delta < -ChangeTabDeltaThreshold -> onDaySelected(DroidKaigi2025Day.ConferenceDay2)
+                                        DroidKaigi2025Day.ConferenceDay2 if delta > ChangeTabDeltaThreshold -> onDaySelected(DroidKaigi2025Day.ConferenceDay1)
                                         else -> {
                                             // NOOP
                                         }
