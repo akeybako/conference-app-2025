@@ -94,10 +94,10 @@ struct EditProfileCardForm: View {
                     }
                 ),
                 title: String(localized: "Image", bundle: .module),
-                errorMessage: presenter.formState.imageError,
                 dismissKeyboard: {
                     focusedField = nil
-                }
+                },
+                errorMessage: presenter.formState.imageError
             )
 
             ProfileCardInputCardVariant(

@@ -11,7 +11,7 @@ public struct ProfileCardInputImage: View {
     var dismissKeyboard: () -> Void
     var errorMessage: String?
 
-    public init(selectedPhoto: Binding<PhotosPickerItem?>, title: String, dismissKeyboard: @escaping () -> Void = {}) {
+    public init(selectedPhoto: Binding<PhotosPickerItem?>, title: String, dismissKeyboard: @escaping () -> Void = {}, errorMessage: String? = nil) {
         self._selectedPhoto = selectedPhoto
         self.title = title
         self.dismissKeyboard = dismissKeyboard
