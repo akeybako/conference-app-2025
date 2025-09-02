@@ -19,6 +19,7 @@ public struct ProfileCardInputTextField: View {
             Text(title)
                 .typographyStyle(.titleMedium)
                 .foregroundStyle(.white)
+                .padding(.bottom, 4)
 
             TextField(placeholder, text: $text)
                 .padding(.horizontal, 16)
@@ -36,7 +37,7 @@ public struct ProfileCardInputTextField: View {
                 Text(errorMessage)
                     .typographyStyle(.bodySmall)
                     .foregroundStyle(AssetColors.error.swiftUIColor)
-                    .padding(.leading, 4)
+                    .padding(.leading, 16)
             }
         }
     }

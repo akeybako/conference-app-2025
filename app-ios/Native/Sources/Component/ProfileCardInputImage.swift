@@ -17,7 +17,7 @@ public struct ProfileCardInputImage: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 20) {
             Text(title)
                 .typographyStyle(.titleMedium)
                 .foregroundStyle(.white)
@@ -73,7 +73,6 @@ public struct ProfileCardInputImage: View {
                 Text(errorMessage)
                     .typographyStyle(.bodySmall)
                     .foregroundStyle(AssetColors.error.swiftUIColor)
-                    .padding(.leading, 4)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
