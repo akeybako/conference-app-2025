@@ -22,6 +22,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -37,6 +38,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.window.core.layout.WindowWidthSizeClass
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,9 +48,7 @@ fun AnimatedTextTopAppBar(
     onBackClick: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     windowInsets: WindowInsets = AnimatedTextTopAppBarDefaults.windowInsets(),
-    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors().copy(
-        scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-    ),
+    colors: TopAppBarColors? = null,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
@@ -59,6 +59,15 @@ fun AnimatedTextTopAppBar(
     }
     val density = LocalDensity.current.density
     var navigationIconWidthDp by remember { mutableStateOf(0f) }
+
+    val widthSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+    val resolvedColors: TopAppBarColors =
+        colors ?: TopAppBarDefaults.topAppBarColors(
+            scrolledContainerColor = when (widthSizeClass) {
+                WindowWidthSizeClass.MEDIUM, WindowWidthSizeClass.EXPANDED -> MaterialTheme.colorScheme.background
+                else -> MaterialTheme.colorScheme.surfaceContainer
+            }
+        )
 
     TopAppBar(
         title = {
@@ -118,7 +127,7 @@ fun AnimatedTextTopAppBar(
         },
         actions = actions,
         windowInsets = windowInsets,
-        colors = colors,
+        colors = resolvedColors,
         scrollBehavior = scrollBehavior,
     )
 }

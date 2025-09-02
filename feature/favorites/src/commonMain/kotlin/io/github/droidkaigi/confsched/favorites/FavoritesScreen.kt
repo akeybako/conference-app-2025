@@ -36,6 +36,8 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.window.core.layout.WindowWidthSizeClass
 
 const val FavoritesScreenTestTag = "FavoritesScreenTestTag"
 
@@ -51,6 +53,7 @@ fun FavoritesScreen(
     onDay2FilterChipClick: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    val widthSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val transitionFraction by remember(scrollBehavior) {
         derivedStateOf {
             scrollBehavior.state.overlappedFraction.coerceIn(0f, 1f)
@@ -80,7 +83,12 @@ fun FavoritesScreen(
                 onDay2FilterChipClick = onDay2FilterChipClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = transitionFraction)),
+                    .background(
+                        when (widthSizeClass) {
+                            WindowWidthSizeClass.MEDIUM, WindowWidthSizeClass.EXPANDED -> MaterialTheme.colorScheme.background
+                            else -> MaterialTheme.colorScheme.surfaceContainer.copy(alpha = transitionFraction)
+                        }
+                    )
             )
             when (uiState.timetableContentState) {
                 FavoritesScreenUiState.TimetableContentState.Empty -> {
