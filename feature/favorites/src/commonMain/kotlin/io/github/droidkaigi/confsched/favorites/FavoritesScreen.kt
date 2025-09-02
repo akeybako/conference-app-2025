@@ -12,6 +12,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowWidthSizeClass
 import io.github.droidkaigi.confsched.droidkaigiui.KaigiPreviewContainer
 import io.github.droidkaigi.confsched.droidkaigiui.component.AnimatedTextTopAppBar
 import io.github.droidkaigi.confsched.droidkaigiui.compositionlocal.safeDrawingWithBottomNavBar
@@ -36,8 +38,6 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.window.core.layout.WindowWidthSizeClass
 
 const val FavoritesScreenTestTag = "FavoritesScreenTestTag"
 
@@ -87,8 +87,8 @@ fun FavoritesScreen(
                         when (widthSizeClass) {
                             WindowWidthSizeClass.MEDIUM, WindowWidthSizeClass.EXPANDED -> MaterialTheme.colorScheme.background
                             else -> MaterialTheme.colorScheme.surfaceContainer.copy(alpha = transitionFraction)
-                        }
-                    )
+                        },
+                    ),
             )
             when (uiState.timetableContentState) {
                 FavoritesScreenUiState.TimetableContentState.Empty -> {

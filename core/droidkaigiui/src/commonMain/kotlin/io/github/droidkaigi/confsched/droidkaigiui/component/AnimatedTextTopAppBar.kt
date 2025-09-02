@@ -66,7 +66,7 @@ fun AnimatedTextTopAppBar(
             scrolledContainerColor = when (widthSizeClass) {
                 WindowWidthSizeClass.MEDIUM, WindowWidthSizeClass.EXPANDED -> MaterialTheme.colorScheme.background
                 else -> MaterialTheme.colorScheme.surfaceContainer
-            }
+            },
         )
 
     TopAppBar(
