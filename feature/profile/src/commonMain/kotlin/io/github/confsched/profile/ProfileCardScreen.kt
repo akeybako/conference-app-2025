@@ -31,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
@@ -90,7 +91,10 @@ fun ProfileCardScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            FlippableProfileCard(uiState = uiState)
+            FlippableProfileCard(
+                uiState = uiState,
+                modifier = Modifier.alpha(if (shareableProfileCardRenderResult != null) 1f else 0f),
+            )
             Spacer(Modifier.height(32.dp))
             Button(
                 enabled = shareableProfileCardRenderResult != null,
