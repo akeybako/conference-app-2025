@@ -91,7 +91,7 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
     modifier: Modifier = Modifier,
 ) {
     var height by remember { mutableIntStateOf(0) }
-    var childMenuIsBookmarked by remember { mutableStateOf(isBookmarked) } // local copy to update after transition
+    var childMenuIsBookmarked by remember(isBookmarked) { mutableStateOf(isBookmarked) } // local copy to update after transition
     val latestIsBookmarked by rememberUpdatedState(isBookmarked) // to ensure the latest value is used in recomposition
 
     // Recompose child menu items only after the view size has settled.
