@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +41,6 @@ import io.github.droidkaigi.confsched.sessions.remove_from_bookmark
 import io.github.droidkaigi.confsched.sessions.share_link
 import io.github.droidkaigi.confsched.sessions.slide
 import io.github.droidkaigi.confsched.sessions.video
-import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -51,7 +49,7 @@ fun TimetableItemDetailFloatingActionButtonMenu(
     isBookmarked: Boolean,
     slideUrl: String?,
     videoUrl: String?,
-    onBookmarkClick: (isBookmarked: Boolean) -> Unit,
+    onBookmarkChanged: (isBookmarked: Boolean) -> Unit,
     onAddCalendarClick: () -> Unit,
     onShareClick: () -> Unit,
     onViewSlideClick: (url: String) -> Unit,
@@ -66,7 +64,7 @@ fun TimetableItemDetailFloatingActionButtonMenu(
         slideUrl = slideUrl,
         videoUrl = videoUrl,
         onExpandedChange = { expanded = it },
-        onBookmarkClick = onBookmarkClick,
+        onBookmarkChenged = onBookmarkChanged,
         onAddCalendarClick = onAddCalendarClick,
         onShareClick = onShareClick,
         onViewSlideClick = onViewSlideClick,
@@ -83,7 +81,7 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
     slideUrl: String?,
     videoUrl: String?,
     onExpandedChange: (Boolean) -> Unit,
-    onBookmarkClick: (isBookmarked: Boolean) -> Unit,
+    onBookmarkChenged: (isBookmarked: Boolean) -> Unit,
     onAddCalendarClick: () -> Unit,
     onShareClick: () -> Unit,
     onViewSlideClick: (url: String) -> Unit,
@@ -92,13 +90,13 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
 ) {
     var height by remember { mutableIntStateOf(0) }
     var childMenuIsBookmarked by remember(isBookmarked) { mutableStateOf(isBookmarked) } // local copy to update after transition
-    val latestIsBookmarked by rememberUpdatedState(isBookmarked) // to ensure the latest value is used in recomposition
+    var latestIsBookmarked by remember(isBookmarked) { mutableStateOf(isBookmarked) }
 
-    // Recompose child menu items only after the view size has settled.
-    // Recomposing them during the transition may cause a brief flicker that makes the menu look flaky.
+    // Synchronize the local copy when the prop changes while collapsed
     LaunchedEffect(height) {
-        delay(100) // small debounce delay to wait until transition stabilizes
-        childMenuIsBookmarked = latestIsBookmarked
+        if (!expanded && latestIsBookmarked != isBookmarked) {
+            onBookmarkChenged(latestIsBookmarked)
+        }
     }
     val haptic = LocalHapticFeedback.current
 
@@ -136,7 +134,8 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
                 if (!isBookmarked) {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 }
-                onBookmarkClick(!isBookmarked)
+//                onBookmarkClick(!isBookmarked)
+                latestIsBookmarked = !isBookmarked
                 onExpandedChange(false)
             },
             text = {
@@ -209,7 +208,7 @@ private fun TimetableItemDetailFloatingMenuPreview() {
                 expanded = false,
                 isBookmarked = false,
                 onExpandedChange = {},
-                onBookmarkClick = {},
+                onBookmarkChenged = {},
                 onAddCalendarClick = {},
                 onShareClick = {},
                 slideUrl = session.asset.slideUrl,
@@ -231,7 +230,7 @@ private fun TimetableItemDetailFloatingMenuExpandedPreview() {
                 expanded = true,
                 isBookmarked = false,
                 onExpandedChange = {},
-                onBookmarkClick = {},
+                onBookmarkChenged = {},
                 onAddCalendarClick = {},
                 onShareClick = {},
                 slideUrl = session.asset.slideUrl,
