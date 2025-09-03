@@ -8,8 +8,13 @@ public struct ProfileCardInputTextField: View {
     @Binding var text: String
     var errorMessage: String?
 
-    public init(title: String, placeholder: String = "", keyboardType: UIKeyboardType = .default, text: Binding<String>, errorMessage: String? = nil)
-    {
+    public init(
+        title: String,
+        placeholder: String = "",
+        keyboardType: UIKeyboardType = .default,
+        text: Binding<String>,
+        errorMessage: String? = nil
+    ) {
         self.title = title
         self.placeholder = placeholder
         self.keyboardType = keyboardType
