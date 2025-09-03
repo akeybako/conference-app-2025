@@ -1,6 +1,7 @@
 package io.github.droidkaigi.confsched.navigation
 
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
@@ -31,7 +32,7 @@ actual fun listDetailSceneStrategyDetailPaneMetaData(): Map<String, Any> {
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 actual fun sceneStrategy(): SceneStrategy<NavKey> {
-    return rememberListDetailSceneStrategy()
+    return rememberListDetailSceneStrategy(BackNavigationBehavior.PopLatest)
 }
 
 @Composable
