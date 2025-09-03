@@ -53,7 +53,7 @@ compose.desktop {
             // For display name of “app-desktop.app” in Finder/Dock/DMG
             packageName = "DroidKaigi 2025"
             // If necessary, modify the code to obtain and load packageVersion from a single source on all platforms.
-            packageVersion = "1.0.0"
+            packageVersion = "1.1.0"
             copyright = "Copyright 2025 DroidKaigi committee"
             licenseFile.set(rootProject.file("LICENSE.md"))
 
