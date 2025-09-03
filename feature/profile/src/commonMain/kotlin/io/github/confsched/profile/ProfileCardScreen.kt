@@ -1,7 +1,7 @@
 package io.github.confsched.profile
 
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,7 +32,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -76,7 +75,14 @@ fun ProfileCardScreen(
     var shareableProfileCardRenderResult: ImageBitmap? by remember { mutableStateOf(null) }
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val backgroundAlpha = remember { Animatable(0f) }
+    val isShareReady = shareableProfileCardRenderResult != null
+    val backgroundAlpha by animateFloatAsState(
+        targetValue = if (isShareReady) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = 500,
+            easing = FastOutSlowInEasing,
+        ),
+    )
     val backgroundRes = when (uiState.profile.theme) {
         ProfileCardTheme.DarkPill,
         ProfileCardTheme.DarkDiamond,
@@ -86,21 +92,6 @@ fun ProfileCardScreen(
         ProfileCardTheme.LightDiamond,
         ProfileCardTheme.LightFlower,
         -> ProfileRes.drawable.shareable_card_background_night
-    }
-
-    LaunchedEffect(shareableProfileCardRenderResult) {
-        if (shareableProfileCardRenderResult != null) {
-            backgroundAlpha.snapTo(0f)
-            backgroundAlpha.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(
-                    durationMillis = 500,
-                    easing = FastOutSlowInEasing,
-                ),
-            )
-        } else {
-            backgroundAlpha.snapTo(0f)
-        }
     }
 
     // Not displayed, just for generating shareable card image
@@ -124,7 +115,7 @@ fun ProfileCardScreen(
             modifier = Modifier.matchParentSize(),
             contentScale = ContentScale.Crop,
             alignment = Alignment.Center,
-            alpha = backgroundAlpha.value,
+            alpha = backgroundAlpha,
         )
         Scaffold(
             topBar = {
@@ -154,11 +145,11 @@ fun ProfileCardScreen(
             ) {
                 FlippableProfileCard(
                     uiState = uiState,
-                    modifier = Modifier.alpha(if (shareableProfileCardRenderResult != null) 1f else 0f),
+                    modifier = Modifier.alpha(if (isShareReady) 1f else 0f),
                 )
                 Spacer(Modifier.height(32.dp))
                 Button(
-                    enabled = shareableProfileCardRenderResult != null,
+                    enabled = isShareReady,
                     onClick = {
                         shareableProfileCardRenderResult?.let {
                             coroutineScope.launch { onShareClick(it) }
