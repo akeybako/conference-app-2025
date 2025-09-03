@@ -2,6 +2,9 @@ package io.github.droidkaigi.confsched.sessions
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -47,6 +50,8 @@ import io.github.droidkaigi.confsched.sessions.section.TimetableUiState
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
 import org.jetbrains.compose.ui.tooling.preview.Preview
+
+private const val ChangeTabDeltaThreshold = 20f
 
 @Composable
 fun TimetableScreen(
@@ -148,6 +153,18 @@ fun TimetableScreen(
                     is TimetableUiState.ListTimetable -> {
                         val timetableListUiState = requireNotNull(uiState.timetable.timetableListUiStates[selectedDay])
                         TimetableList(
+                            modifier = modifier.draggable(
+                                orientation = Orientation.Horizontal,
+                                state = rememberDraggableState { delta ->
+                                    when (selectedDay) {
+                                        DroidKaigi2025Day.ConferenceDay1 if delta > ChangeTabDeltaThreshold -> onDaySelected(DroidKaigi2025Day.ConferenceDay2)
+                                        DroidKaigi2025Day.ConferenceDay2 if delta < -ChangeTabDeltaThreshold -> onDaySelected(DroidKaigi2025Day.ConferenceDay1)
+                                        else -> {
+                                            // NOOP
+                                        }
+                                    }
+                                },
+                            ),
                             timetableItemMap = timetableListUiState.timetableItemMap,
                             onTimetableItemClick = onTimetableItemClick,
                             onBookmarkClick = { id -> onBookmarkClick(id.value) },

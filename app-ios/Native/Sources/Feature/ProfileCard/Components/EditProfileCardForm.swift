@@ -7,6 +7,14 @@ import Theme
 struct EditProfileCardForm: View {
     @Binding var presenter: ProfileCardPresenter
 
+    enum Field: Hashable {
+        case nickName
+        case occupation
+        case link
+        case image
+    }
+    @FocusState private var focusedField: Field?
+
     var body: some View {
         VStack(spacing: 32) {
             Text(
@@ -27,8 +35,13 @@ struct EditProfileCardForm: View {
                     set: {
                         presenter.setName($0)
                     }
-                ),
+                )
             )
+            .focused($focusedField, equals: .nickName)
+            .submitLabel(.next)
+            .onSubmit {
+                focusedField = .occupation
+            }
 
             ProfileCardInputTextField(
                 title: String(localized: "Occupation", bundle: .module),
@@ -39,12 +52,18 @@ struct EditProfileCardForm: View {
                     set: {
                         presenter.setOccupation($0)
                     }
-                ),
+                )
             )
+            .focused($focusedField, equals: .occupation)
+            .submitLabel(.next)
+            .onSubmit {
+                focusedField = .link
+            }
 
             ProfileCardInputTextField(
                 title: String(localized: "Link（ex.X、Instagram...）", bundle: .module),
                 placeholder: "https://",
+                keyboardType: .URL,
                 text: .init(
                     get: {
                         presenter.formState.urlString
@@ -54,6 +73,10 @@ struct EditProfileCardForm: View {
                     }
                 )
             )
+            .focused($focusedField, equals: .link)
+            .onSubmit {
+                focusedField = nil
+            }
 
             ProfileCardInputImage(
                 selectedPhoto: .init(
@@ -64,7 +87,10 @@ struct EditProfileCardForm: View {
                         presenter.setImage($0)
                     }
                 ),
-                title: String(localized: "Image", bundle: .module)
+                title: String(localized: "Image", bundle: .module),
+                dismissKeyboard: {
+                    focusedField = nil
+                }
             )
 
             ProfileCardInputCardVariant(
@@ -79,6 +105,7 @@ struct EditProfileCardForm: View {
             )
 
             Button {
+                focusedField = nil
                 presenter.createCard()
             } label: {
                 Text(String(localized: "Create Card", bundle: .module))
@@ -87,5 +114,8 @@ struct EditProfileCardForm: View {
             .filledButtonStyle()
         }
         .padding(.horizontal, 16)
+        .onTapGesture {
+            focusedField = nil
+        }
     }
 }

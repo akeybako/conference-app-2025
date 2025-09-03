@@ -152,7 +152,7 @@ actual fun KaigiAppUi() {
 
                             AboutItem.X -> {
                                 externalNavController.navigate(
-                                    url = "https://twitter.com/DroidKaigi",
+                                    url = "https://x.com/DroidKaigi",
                                 )
                             }
 

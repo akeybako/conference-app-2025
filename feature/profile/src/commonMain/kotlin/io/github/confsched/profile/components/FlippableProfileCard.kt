@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -83,7 +84,11 @@ private fun ProfileCard(
 ) {
     Card(
         modifier = modifier
-            .clickable(enabled = interactionsEnabled) {
+            .clickable(
+                enabled = interactionsEnabled,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+            ) {
                 onFlippedChange(!isFlipped)
             }
             .draggable(

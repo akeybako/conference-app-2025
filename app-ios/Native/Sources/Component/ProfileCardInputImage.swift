@@ -8,10 +8,12 @@ public struct ProfileCardInputImage: View {
     @State private var selectedImage: Image?
     @Binding var selectedPhoto: PhotosPickerItem?
     var title: String
+    var dismissKeyboard: () -> Void
 
-    public init(selectedPhoto: Binding<PhotosPickerItem?>, title: String) {
+    public init(selectedPhoto: Binding<PhotosPickerItem?>, title: String, dismissKeyboard: @escaping () -> Void = {}) {
         self._selectedPhoto = selectedPhoto
         self.title = title
+        self.dismissKeyboard = dismissKeyboard
     }
 
     public var body: some View {
@@ -44,6 +46,7 @@ public struct ProfileCardInputImage: View {
                 }
             } else {
                 Button {
+                    dismissKeyboard()
                     isPickerPresented = true
                 } label: {
                     HStack {
