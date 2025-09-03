@@ -32,6 +32,8 @@ actual fun listDetailSceneStrategyDetailPaneMetaData(): Map<String, Any> {
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 actual fun sceneStrategy(): SceneStrategy<NavKey> {
+    // To pop the continuous list pane's backstack one by one using PopLatest.
+    // https://github.com/DroidKaigi/conference-app-2025/pull/539
     return rememberListDetailSceneStrategy(BackNavigationBehavior.PopLatest)
 }
 
