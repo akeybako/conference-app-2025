@@ -1,3 +1,4 @@
+import Component
 import Model
 import SwiftUI
 import Theme
@@ -22,7 +23,7 @@ struct SponsorCard: View {
     }
 
     var body: some View {
-        AsyncImage(url: sponsor.logoUrl) { image in
+        CacheAsyncImage(url: sponsor.logoUrl) { image in
             image
                 .resizable()
                 .aspectRatio(contentMode: .fit)
