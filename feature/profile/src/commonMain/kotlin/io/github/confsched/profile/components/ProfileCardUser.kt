@@ -52,6 +52,7 @@ fun ProfileCardUser(
             color = if (isDarkTheme) Color.White else Color.Black,
             fontFamily = robotoRegularFontFamily(),
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
         Text(
             text = userName,
@@ -59,6 +60,7 @@ fun ProfileCardUser(
             color = if (isDarkTheme) Color.White else Color.Black,
             fontFamily = changoFontFamily(),
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
