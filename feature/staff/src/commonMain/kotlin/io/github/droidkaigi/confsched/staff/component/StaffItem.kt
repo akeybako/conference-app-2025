@@ -51,7 +51,7 @@ fun StaffItem(
             loading = {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = null
+                    contentDescription = staff.username,
                 )
             },
             modifier = Modifier

@@ -54,7 +54,7 @@ fun ContributorItem(
             loading = {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = null
+                    contentDescription = contributor.username,
                 )
             },
             modifier = Modifier

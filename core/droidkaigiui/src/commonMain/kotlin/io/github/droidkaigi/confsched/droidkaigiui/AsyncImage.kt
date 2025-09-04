@@ -9,6 +9,8 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter.State
 import coil3.compose.SubcomposeAsyncImageScope
@@ -24,13 +26,21 @@ fun SubcomposeAsyncImage(
     modifier: Modifier = Modifier,
     loading: @Composable (SubcomposeAsyncImageScope.(State.Loading) -> Unit)? = {
         CircularWavyProgressIndicator(
-            modifier = Modifier.padding(4.dp).wrapContentSize().aspectRatio(1f)
+            modifier = Modifier
+                .padding(4.dp)
+                .wrapContentSize()
+                .aspectRatio(1f)
+                .semantics {
+                    contentDescription?.let {
+                        this.contentDescription = it
+                    }
+                },
         )
     },
     error: @Composable (SubcomposeAsyncImageScope.(State.Error) -> Unit) = {
         Image(
             painter = painterResource(DroidkaigiuiRes.drawable.error_mascot),
-            contentDescription = null
+            contentDescription = null,
         )
     },
 ) {
@@ -40,6 +50,12 @@ fun SubcomposeAsyncImage(
         contentScale = contentScale,
         modifier = modifier,
         loading = loading,
+        success = {
+            Image(
+                painter = painter,
+                contentDescription = contentDescription,
+            )
+        },
         error = error,
     )
 }
