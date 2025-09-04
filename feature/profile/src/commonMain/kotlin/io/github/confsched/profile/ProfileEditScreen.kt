@@ -54,9 +54,9 @@ import androidx.compose.ui.unit.dp
 import io.github.confsched.profile.components.ThemeWithShape
 import io.github.confsched.profile.components.shapeValue
 import io.github.droidkaigi.confsched.droidkaigiui.KaigiPreviewContainer
+import io.github.droidkaigi.confsched.droidkaigiui.SubcomposeAsyncImage
 import io.github.droidkaigi.confsched.droidkaigiui.component.AnimatedTextTopAppBar
 import io.github.droidkaigi.confsched.droidkaigiui.compositionlocal.safeDrawingWithBottomNavBar
-import io.github.droidkaigi.confsched.droidkaigiui.rememberAsyncImagePainter
 import io.github.droidkaigi.confsched.model.profile.Profile
 import io.github.droidkaigi.confsched.model.profile.ProfileCardTheme
 import io.github.droidkaigi.confsched.profile.ProfileRes
@@ -463,9 +463,8 @@ private fun ImagePicker(
             modifier = Modifier
                 .size(120.dp),
         ) {
-            val painter = rememberAsyncImagePainter(image)
-            Image(
-                painter = painter,
+            SubcomposeAsyncImage(
+                model = image,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
