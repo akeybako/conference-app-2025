@@ -48,11 +48,11 @@ import androidx.compose.ui.unit.dp
 import io.github.confsched.profile.components.CardPreviewImageBitmaps
 import io.github.confsched.profile.components.FlippableProfileCard
 import io.github.confsched.profile.components.ShareableProfileCard
+import io.github.confsched.profile.components.isDark
 import io.github.droidkaigi.confsched.droidkaigiui.KaigiPreviewContainer
 import io.github.droidkaigi.confsched.droidkaigiui.component.AnimatedTextTopAppBar
 import io.github.droidkaigi.confsched.droidkaigiui.compositionlocal.safeDrawingWithBottomNavBar
 import io.github.droidkaigi.confsched.model.profile.Profile
-import io.github.droidkaigi.confsched.model.profile.ProfileCardTheme
 import io.github.droidkaigi.confsched.profile.ProfileRes
 import io.github.droidkaigi.confsched.profile.edit
 import io.github.droidkaigi.confsched.profile.profile_card_title
@@ -83,16 +83,6 @@ fun ProfileCardScreen(
             easing = FastOutSlowInEasing,
         ),
     )
-    val backgroundRes = when (uiState.profile.theme) {
-        ProfileCardTheme.DarkPill,
-        ProfileCardTheme.DarkDiamond,
-        ProfileCardTheme.DarkFlower,
-        -> ProfileRes.drawable.shareable_card_background_day
-        ProfileCardTheme.LightPill,
-        ProfileCardTheme.LightDiamond,
-        ProfileCardTheme.LightFlower,
-        -> ProfileRes.drawable.shareable_card_background_night
-    }
 
     // Not displayed, just for generating shareable card image
     ShareableProfileCard(
@@ -110,7 +100,13 @@ fun ProfileCardScreen(
             .background(MaterialTheme.colorScheme.background),
     ) {
         Image(
-            painter = painterResource(backgroundRes),
+            painter = painterResource(
+                if (uiState.profile.theme.isDark) {
+                    ProfileRes.drawable.shareable_card_background_day
+                } else {
+                    ProfileRes.drawable.shareable_card_background_night
+                },
+            ),
             contentDescription = null,
             modifier = Modifier.matchParentSize(),
             contentScale = ContentScale.Crop,
