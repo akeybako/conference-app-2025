@@ -43,6 +43,7 @@ import io.github.droidkaigi.confsched.model.sessions.TimetableItemId
 import io.github.droidkaigi.confsched.model.sessions.TimetableUiType
 import io.github.droidkaigi.confsched.model.sessions.fake
 import io.github.droidkaigi.confsched.sessions.components.TimetableTopAppBar
+import io.github.droidkaigi.confsched.sessions.grid.TimeLine
 import io.github.droidkaigi.confsched.sessions.grid.TimetableGrid
 import io.github.droidkaigi.confsched.sessions.grid.TimetableGridUiState
 import io.github.droidkaigi.confsched.sessions.section.TimetableListUiState
@@ -50,6 +51,7 @@ import io.github.droidkaigi.confsched.sessions.section.TimetableUiState
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.Duration.Companion.hours
 
 private const val ChangeTabDeltaThreshold = 20f
 
@@ -143,7 +145,7 @@ fun TimetableScreen(
                     is TimetableUiState.GridTimetable -> {
                         TimetableGrid(
                             timetable = requireNotNull(uiState.timetable.timetableGridUiState[selectedDay]).timetable,
-                            timeLine = null, // TODO
+                            timeLine = uiState.timetable.timeLine,
                             onTimetableItemClick = onTimetableItemClick,
                             selectedDay = selectedDay,
                             contentPadding = WindowInsets.safeDrawingWithBottomNavBar.excludeTop().asPaddingValues(),
@@ -250,6 +252,10 @@ private fun TimetableScreenPreview_Grid() {
                         ),
                     ),
                     selectedDay = DroidKaigi2025Day.ConferenceDay1,
+                    timeLine = TimeLine(
+                        currentTime = DroidKaigi2025Day.ConferenceDay1.start + 11.hours,
+                        currentDay = DroidKaigi2025Day.ConferenceDay1,
+                    ),
                 ),
                 uiType = TimetableUiType.Grid,
             ),
