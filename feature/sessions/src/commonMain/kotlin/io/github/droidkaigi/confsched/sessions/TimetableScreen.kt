@@ -22,12 +22,9 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,7 +43,6 @@ import io.github.droidkaigi.confsched.model.sessions.TimetableItemId
 import io.github.droidkaigi.confsched.model.sessions.TimetableUiType
 import io.github.droidkaigi.confsched.model.sessions.fake
 import io.github.droidkaigi.confsched.sessions.components.TimetableTopAppBar
-import io.github.droidkaigi.confsched.sessions.grid.LocalClock
 import io.github.droidkaigi.confsched.sessions.grid.TimeLine
 import io.github.droidkaigi.confsched.sessions.grid.TimetableGrid
 import io.github.droidkaigi.confsched.sessions.grid.TimetableGridUiState
@@ -54,8 +50,8 @@ import io.github.droidkaigi.confsched.sessions.section.TimetableListUiState
 import io.github.droidkaigi.confsched.sessions.section.TimetableUiState
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
-import kotlinx.coroutines.delay
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.Duration.Companion.hours
 
 private const val ChangeTabDeltaThreshold = 20f
 
@@ -71,9 +67,6 @@ fun TimetableScreen(
 ) {
     val collapsingState = rememberCollapsingHeaderEnterAlwaysState()
     val lazyListState = rememberLazyListState()
-
-    val clock = LocalClock.current
-    var timeLine by remember { mutableStateOf(TimeLine.now(clock)) }
 
     val completelyScrolledToTop by remember {
         derivedStateOf {
@@ -91,13 +84,6 @@ fun TimetableScreen(
         is TimetableUiState.GridTimetable -> uiState.timetable.selectedDay
         is TimetableUiState.ListTimetable -> uiState.timetable.selectedDay
         else -> DroidKaigi2025Day.ConferenceDay1
-    }
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(1_000L)
-            timeLine = TimeLine.now(clock)
-        }
     }
 
     Scaffold(
@@ -159,7 +145,7 @@ fun TimetableScreen(
                     is TimetableUiState.GridTimetable -> {
                         TimetableGrid(
                             timetable = requireNotNull(uiState.timetable.timetableGridUiState[selectedDay]).timetable,
-                            timeLine = timeLine,
+                            timeLine = uiState.timetable.timeLine,
                             onTimetableItemClick = onTimetableItemClick,
                             selectedDay = selectedDay,
                             contentPadding = WindowInsets.safeDrawingWithBottomNavBar.excludeTop().asPaddingValues(),
@@ -266,6 +252,10 @@ private fun TimetableScreenPreview_Grid() {
                         ),
                     ),
                     selectedDay = DroidKaigi2025Day.ConferenceDay1,
+                    timeLine = TimeLine(
+                        currentTime = DroidKaigi2025Day.ConferenceDay1.start + 11.hours,
+                        currentDay = DroidKaigi2025Day.ConferenceDay1,
+                    ),
                 ),
                 uiType = TimetableUiType.Grid,
             ),
