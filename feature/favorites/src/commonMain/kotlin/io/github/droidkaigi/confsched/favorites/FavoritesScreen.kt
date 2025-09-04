@@ -4,10 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -88,7 +91,8 @@ fun FavoritesScreen(
                             WindowWidthSizeClass.MEDIUM, WindowWidthSizeClass.EXPANDED -> MaterialTheme.colorScheme.background
                             else -> MaterialTheme.colorScheme.surfaceContainer.copy(alpha = transitionFraction)
                         },
-                    ),
+                    )
+                    .padding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal).asPaddingValues()),
             )
             when (uiState.timetableContentState) {
                 FavoritesScreenUiState.TimetableContentState.Empty -> {
