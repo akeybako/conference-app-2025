@@ -55,3 +55,21 @@ fun ProfileCardDropShadow(
         content()
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun ProfileCardDropShadowPreview() {
+    ProfileCardDropShadow(
+        modifier = Modifier.padding(64.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .width(300.dp)
+                .height(380.dp)
+                .clip(
+                    shape = RoundedCornerShape(16.dp),
+                )
+                .background(color = Color.Gray),
+        )
+    }
+}
