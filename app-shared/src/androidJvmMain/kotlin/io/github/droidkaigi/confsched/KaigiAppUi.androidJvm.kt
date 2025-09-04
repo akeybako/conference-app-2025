@@ -64,7 +64,7 @@ actual fun KaigiAppUi() {
                 MainScreenTab.Profile -> ProfileNavKey
             }
             backStack.clear()
-            backStack.add(navKey)
+            backStack.addAll(listOf(TimetableNavKey, navKey).distinct())
         },
         hazeState = hazeState,
     ) {

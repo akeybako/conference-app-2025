@@ -1,3 +1,4 @@
+import Component
 import Model
 import SwiftUI
 import Theme
@@ -7,7 +8,7 @@ struct ContributorListItem: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            AsyncImage(url: contributor.iconUrl) { image in
+            CacheAsyncImage(url: contributor.iconUrl) { image in
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)

@@ -9,15 +9,22 @@ public struct ProfileCardInputImage: View {
     @Binding var selectedPhoto: PhotosPickerItem?
     var title: String
     var dismissKeyboard: () -> Void
+    var errorMessage: String?
 
-    public init(selectedPhoto: Binding<PhotosPickerItem?>, title: String, dismissKeyboard: @escaping () -> Void = {}) {
+    public init(
+        selectedPhoto: Binding<PhotosPickerItem?>,
+        title: String,
+        dismissKeyboard: @escaping () -> Void = {},
+        errorMessage: String? = nil
+    ) {
         self._selectedPhoto = selectedPhoto
         self.title = title
         self.dismissKeyboard = dismissKeyboard
+        self.errorMessage = errorMessage
     }
 
     public var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 20) {
             Text(title)
                 .typographyStyle(.titleMedium)
                 .foregroundStyle(.white)
@@ -68,6 +75,12 @@ public struct ProfileCardInputImage: View {
                             )
                     )
                 }
+            }
+
+            if let errorMessage = errorMessage {
+                Text(errorMessage)
+                    .typographyStyle(.bodySmall)
+                    .foregroundStyle(AssetColors.error.swiftUIColor)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
