@@ -1,11 +1,12 @@
 package io.github.droidkaigi.confsched.sessions
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import io.github.droidkaigi.confsched.common.compose.EventEffect
 import io.github.droidkaigi.confsched.common.compose.EventFlow
 import io.github.droidkaigi.confsched.common.compose.providePresenterDefaults
@@ -21,7 +22,6 @@ import io.github.droidkaigi.confsched.sessions.section.TimetableListUiState
 import io.github.droidkaigi.confsched.sessions.section.TimetableUiState
 import io.github.takahirom.rin.rememberRetained
 import kotlinx.collections.immutable.toPersistentMap
-import kotlinx.coroutines.delay
 import soil.query.compose.rememberMutation
 
 @Composable
@@ -56,11 +56,8 @@ fun timetableScreenPresenter(
         }
     }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(1_000L)
-            timeLine = TimeLine.now(clock)
-        }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        timeLine = TimeLine.now(clock)
     }
 
     TimetableScreenUiState(
