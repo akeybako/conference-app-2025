@@ -71,6 +71,7 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.ExperimentalTime
 
 @Composable
@@ -470,7 +471,7 @@ private fun TimetableGridPreview() {
 @Composable
 private fun TimetableGridWithTimelinePreview() {
     val timetable = remember { Timetable.fake() }
-    val currentTime = LocalDateTime.parse("2025-09-11T11:00:00.00").toInstant(TimeZone.of("UTC+9"))
+    val currentTime = DroidKaigi2025Day.ConferenceDay1.start + 11.hours
     CompositionLocalProvider(LocalClock provides FakeClock(currentTime)) {
         KaigiPreviewContainer(Modifier.fillMaxSize()) {
             TimetableGrid(
