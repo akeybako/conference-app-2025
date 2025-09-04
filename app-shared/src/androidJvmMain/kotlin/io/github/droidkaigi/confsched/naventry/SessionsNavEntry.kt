@@ -4,7 +4,6 @@ import androidx.navigation3.runtime.EntryProviderBuilder
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import io.github.droidkaigi.confsched.AppGraph
-import io.github.droidkaigi.confsched.component.ProvideRetainedPolicyIfDesktop
 import io.github.droidkaigi.confsched.model.sessions.TimetableItem
 import io.github.droidkaigi.confsched.model.sessions.TimetableItemId
 import io.github.droidkaigi.confsched.navigation.listDetailSceneStrategyDetailPaneMetaData
@@ -50,13 +49,11 @@ fun EntryProviderBuilder<NavKey>.timetableEntry(
     onTimetableItemClick: (TimetableItemId) -> Unit,
 ) {
     entry<TimetableNavKey>(metadata = listDetailSceneStrategyListPaneMetaData()) {
-        ProvideRetainedPolicyIfDesktop {
-            with(rememberTimetableScreenContextRetained()) {
-                TimetableScreenRoot(
-                    onSearchClick = onSearchClick,
-                    onTimetableItemClick = onTimetableItemClick,
-                )
-            }
+        with(rememberTimetableScreenContextRetained()) {
+            TimetableScreenRoot(
+                onSearchClick = onSearchClick,
+                onTimetableItemClick = onTimetableItemClick,
+            )
         }
     }
 }
@@ -69,15 +66,13 @@ fun EntryProviderBuilder<NavKey>.timetableItemDetailEntry(
     onLinkClick: (String) -> Unit,
 ) {
     entry<TimetableItemDetailNavKey>(metadata = listDetailSceneStrategyDetailPaneMetaData()) {
-        ProvideRetainedPolicyIfDesktop {
-            with(rememberTimetableItemDetailScreenContextRetained(it.id)) {
-                TimetableItemDetailScreenRoot(
-                    onBackClick = onBackClick,
-                    onAddCalendarClick = onAddCalendarClick,
-                    onShareClick = onShareClick,
-                    onLinkClick = onLinkClick,
-                )
-            }
+        with(rememberTimetableItemDetailScreenContextRetained(it.id)) {
+            TimetableItemDetailScreenRoot(
+                onBackClick = onBackClick,
+                onAddCalendarClick = onAddCalendarClick,
+                onShareClick = onShareClick,
+                onLinkClick = onLinkClick,
+            )
         }
     }
 }
@@ -88,17 +83,11 @@ fun EntryProviderBuilder<NavKey>.searchEntry(
     onTimetableItemClick: (TimetableItemId) -> Unit = {},
 ) {
     entry<SearchNavKey>(metadata = listDetailSceneStrategyListPaneMetaData()) {
-        ProvideRetainedPolicyIfDesktop {
-            with(
-                rememberSearchScreenContextRetained(
-                    openedAtEpochMillis = it.openedAtEpochMillis,
-                ),
-            ) {
-                SearchScreenRoot(
-                    onBackClick = onBackClick,
-                    onTimetableItemClick = onTimetableItemClick,
-                )
-            }
+        with(rememberSearchScreenContextRetained()) {
+            SearchScreenRoot(
+                onBackClick = onBackClick,
+                onTimetableItemClick = onTimetableItemClick,
+            )
         }
     }
 }

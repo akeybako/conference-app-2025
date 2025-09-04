@@ -11,4 +11,4 @@ data object TimetableNavKey : NavKey
 data class TimetableItemDetailNavKey(val id: TimetableItemId) : NavKey
 
 @Serializable
-data class SearchNavKey(val openedAtEpochMillis: Long) : NavKey
+data object SearchNavKey : NavKey

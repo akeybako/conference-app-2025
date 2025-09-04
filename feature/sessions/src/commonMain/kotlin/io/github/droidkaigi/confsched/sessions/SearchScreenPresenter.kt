@@ -25,21 +25,11 @@ fun searchScreenPresenter(
     eventFlow: EventFlow<SearchScreenEvent>,
     timetable: Timetable,
 ): SearchScreenUiState = providePresenterDefaults {
-    var searchQuery by rememberRetained(
-        key = "searchQuery:${screenContext.openedAtEpochMillis}",
-    ) { mutableStateOf("") }
-    var selectedDays by rememberRetained(
-        key = "selectedDays:${screenContext.openedAtEpochMillis}",
-    ) { mutableStateOf<List<DroidKaigi2025Day>>(emptyList()) }
-    var selectedCategories by rememberRetained(
-        key = "selectedCategories:${screenContext.openedAtEpochMillis}",
-    ) { mutableStateOf<List<TimetableCategory>>(emptyList()) }
-    var selectedSessionTypes by rememberRetained(
-        key = "selectedSessionTypes:${screenContext.openedAtEpochMillis}",
-    ) { mutableStateOf<List<TimetableSessionType>>(emptyList()) }
-    var selectedLanguages by rememberRetained(
-        key = "selectedLanguages:${screenContext.openedAtEpochMillis}",
-    ) { mutableStateOf<List<Lang>>(emptyList()) }
+    var searchQuery by rememberRetained { mutableStateOf("") }
+    var selectedDays by rememberRetained { mutableStateOf<List<DroidKaigi2025Day>>(emptyList()) }
+    var selectedCategories by rememberRetained { mutableStateOf<List<TimetableCategory>>(emptyList()) }
+    var selectedSessionTypes by rememberRetained { mutableStateOf<List<TimetableSessionType>>(emptyList()) }
+    var selectedLanguages by rememberRetained { mutableStateOf<List<Lang>>(emptyList()) }
     val favoriteTimetableItemIdMutation = rememberMutation(screenContext.favoriteTimetableItemIdMutationKey)
 
     EventEffect(eventFlow) { event ->

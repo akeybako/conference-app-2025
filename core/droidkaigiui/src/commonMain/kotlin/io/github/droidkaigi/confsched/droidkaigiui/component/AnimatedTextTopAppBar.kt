@@ -50,6 +50,7 @@ fun AnimatedTextTopAppBar(
     windowInsets: WindowInsets = AnimatedTextTopAppBarDefaults.windowInsets(),
     colors: TopAppBarColors? = null,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
+    scrolledTextColor: Color = MaterialTheme.colorScheme.onSurface,
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     val transitionFraction by remember(scrollBehavior) {
@@ -59,6 +60,7 @@ fun AnimatedTextTopAppBar(
     }
     val density = LocalDensity.current.density
     var navigationIconWidthDp by remember { mutableStateOf(0f) }
+    val currentTextColor = if (transitionFraction > 0f) scrolledTextColor else textColor
 
     val widthSizeClass = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     val resolvedColors: TopAppBarColors =
@@ -77,7 +79,7 @@ fun AnimatedTextTopAppBar(
                     autoSize = TextAutoSize.StepBased(
                         maxFontSize = 28.sp,
                     ),
-                    color = textColor,
+                    color = currentTextColor,
                     modifier = Modifier
                         .fillMaxWidth()
                         .graphicsLayer {
@@ -93,7 +95,7 @@ fun AnimatedTextTopAppBar(
                     autoSize = TextAutoSize.StepBased(
                         maxFontSize = 16.sp,
                     ),
-                    color = textColor,
+                    color = currentTextColor,
                     modifier = Modifier
                         // Ensures the title appears centered when a navigation icon is present.
                         // Note: The width of actions is currently not considered.

@@ -89,9 +89,7 @@ private fun NavGraphBuilder.searchNavGraph(
     onTimetableItemClick: (TimetableItemId) -> Unit,
 ) {
     composable<SearchRoute> {
-        // Only on the JVM is it necessary to specify the `rememberRetained` key.
-        // This is not required on iOS.
-        with(rememberSearchScreenContextRetained(0L)) {
+        with(rememberSearchScreenContextRetained()) {
             SearchScreenRoot(
                 onBackClick = onBackClick,
                 onTimetableItemClick = onTimetableItemClick,

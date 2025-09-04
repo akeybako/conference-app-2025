@@ -186,7 +186,7 @@ public struct AboutScreen: View {
                 imageName: "ic_xcom_logo"
             ) {
                 Task {
-                    await safari(URL(string: "https://twitter.com/DroidKaigi")!)
+                    await safari(URL(string: "https://x.com/DroidKaigi")!)
                 }
             }
 
