@@ -485,8 +485,7 @@ extension shared.Profile {
         guard !imageData.isEmpty else { return "" }
 
         // Create documents directory path for profile images
-        guard let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            print("Failed to get documents directory")
+            print("Failed to get documents directory. This may be due to missing permissions, sandbox restrictions, or an unexpected system error. Please ensure the app has access to the file system and try again.")
             return ""
         }
         let profileImagesDirectory = documentsPath.appendingPathComponent("ProfileImages")
