@@ -92,7 +92,7 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
     var height by remember { mutableIntStateOf(0) }
     var pendingBookmarkToggle by remember { mutableStateOf(false) }
 
-    // Synchronize the local copy when the prop changes while collapsed
+    // Waiting for open/close animation to finish
     LaunchedEffect(height) {
         delay(100)
         if (pendingBookmarkToggle) {
