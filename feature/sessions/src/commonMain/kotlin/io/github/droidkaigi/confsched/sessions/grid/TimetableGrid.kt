@@ -62,6 +62,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.atTime
@@ -454,6 +455,23 @@ private fun PersistentList<TimetableItem>.insertDummyEndOfTheDayItem(): Persiste
 private fun TimetableGridPreview() {
     val timetable = remember { Timetable.fake() }
     CompositionLocalProvider(LocalClock provides FakeClock) {
+        KaigiPreviewContainer(Modifier.fillMaxSize()) {
+            TimetableGrid(
+                timetable = timetable,
+                timeLine = TimeLine.now(LocalClock.current),
+                selectedDay = DroidKaigi2025Day.ConferenceDay1,
+                onTimetableItemClick = {},
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TimetableGridWithTimelinePreview() {
+    val timetable = remember { Timetable.fake() }
+    val currentTime = LocalDateTime.parse("2025-09-11T11:00:00.00").toInstant(TimeZone.of("UTC+9"))
+    CompositionLocalProvider(LocalClock provides FakeClock(currentTime)) {
         KaigiPreviewContainer(Modifier.fillMaxSize()) {
             TimetableGrid(
                 timetable = timetable,
