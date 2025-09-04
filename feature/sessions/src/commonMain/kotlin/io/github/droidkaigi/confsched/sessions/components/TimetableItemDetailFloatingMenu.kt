@@ -41,6 +41,7 @@ import io.github.droidkaigi.confsched.sessions.remove_from_bookmark
 import io.github.droidkaigi.confsched.sessions.share_link
 import io.github.droidkaigi.confsched.sessions.slide
 import io.github.droidkaigi.confsched.sessions.video
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -90,12 +91,14 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
 ) {
     var height by remember { mutableIntStateOf(0) }
     var childMenuIsBookmarked by remember(isBookmarked) { mutableStateOf(isBookmarked) } // local copy to update after transition
-    var latestIsBookmarked by remember(isBookmarked) { mutableStateOf(isBookmarked) }
+    var pendingBookmarkToggle by remember { mutableStateOf(false) }
 
     // Synchronize the local copy when the prop changes while collapsed
     LaunchedEffect(height) {
-        if (!expanded && latestIsBookmarked != isBookmarked) {
-            onBookmarkChenged(latestIsBookmarked)
+        delay(100)
+        if (pendingBookmarkToggle) {
+            pendingBookmarkToggle = false
+            onBookmarkChenged(!isBookmarked)
         }
     }
     val haptic = LocalHapticFeedback.current
@@ -134,8 +137,7 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
                 if (!isBookmarked) {
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 }
-//                onBookmarkClick(!isBookmarked)
-                latestIsBookmarked = !isBookmarked
+                pendingBookmarkToggle = true
                 onExpandedChange(false)
             },
             text = {
