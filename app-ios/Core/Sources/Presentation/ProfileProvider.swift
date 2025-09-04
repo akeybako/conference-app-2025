@@ -34,11 +34,6 @@ public final class ProfileProvider {
     public func saveProfile(_ profile: Profile) {
         Task {
             await profileUseCase.save(profile)
-
-            // Force refresh after save by canceling current subscription and restarting
-            fetchProfile?.cancel()
-            fetchProfile = nil
-            subscribeProfileIfNeeded()
         }
     }
 }
