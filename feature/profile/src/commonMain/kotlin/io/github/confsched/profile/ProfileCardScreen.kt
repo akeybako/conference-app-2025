@@ -95,9 +95,7 @@ fun ProfileCardScreen(
     )
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+        modifier = Modifier.fillMaxSize(),
     ) {
         Image(
             painter = painterResource(
