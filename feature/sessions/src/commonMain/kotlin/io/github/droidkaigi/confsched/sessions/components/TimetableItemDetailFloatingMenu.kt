@@ -50,7 +50,7 @@ fun TimetableItemDetailFloatingActionButtonMenu(
     isBookmarked: Boolean,
     slideUrl: String?,
     videoUrl: String?,
-    onBookmarkChanged: (isBookmarked: Boolean) -> Unit,
+    onBookmarkToggle: () -> Unit,
     onAddCalendarClick: () -> Unit,
     onShareClick: () -> Unit,
     onViewSlideClick: (url: String) -> Unit,
@@ -65,7 +65,7 @@ fun TimetableItemDetailFloatingActionButtonMenu(
         slideUrl = slideUrl,
         videoUrl = videoUrl,
         onExpandedChange = { expanded = it },
-        onBookmarkChenged = onBookmarkChanged,
+        onBookmarkToggle = onBookmarkToggle,
         onAddCalendarClick = onAddCalendarClick,
         onShareClick = onShareClick,
         onViewSlideClick = onViewSlideClick,
@@ -82,7 +82,7 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
     slideUrl: String?,
     videoUrl: String?,
     onExpandedChange: (Boolean) -> Unit,
-    onBookmarkChenged: (isBookmarked: Boolean) -> Unit,
+    onBookmarkToggle: () -> Unit,
     onAddCalendarClick: () -> Unit,
     onShareClick: () -> Unit,
     onViewSlideClick: (url: String) -> Unit,
@@ -90,7 +90,6 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
     modifier: Modifier = Modifier,
 ) {
     var height by remember { mutableIntStateOf(0) }
-    var childMenuIsBookmarked by remember(isBookmarked) { mutableStateOf(isBookmarked) } // local copy to update after transition
     var pendingBookmarkToggle by remember { mutableStateOf(false) }
 
     // Synchronize the local copy when the prop changes while collapsed
@@ -98,7 +97,7 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
         delay(100)
         if (pendingBookmarkToggle) {
             pendingBookmarkToggle = false
-            onBookmarkChenged(!isBookmarked)
+            onBookmarkToggle()
         }
     }
     val haptic = LocalHapticFeedback.current
@@ -142,7 +141,7 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
             },
             text = {
                 Text(
-                    if (childMenuIsBookmarked) {
+                    if (isBookmarked) {
                         stringResource(SessionsRes.string.remove_from_bookmark)
                     } else {
                         stringResource(SessionsRes.string.add_to_bookmark)
@@ -151,7 +150,7 @@ private fun TimetableItemDetailFloatingActionButtonMenu(
             },
             icon = {
                 Icon(
-                    if (childMenuIsBookmarked) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
+                    if (isBookmarked) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
                     contentDescription = null,
                 )
             },
@@ -210,7 +209,7 @@ private fun TimetableItemDetailFloatingMenuPreview() {
                 expanded = false,
                 isBookmarked = false,
                 onExpandedChange = {},
-                onBookmarkChenged = {},
+                onBookmarkToggle = {},
                 onAddCalendarClick = {},
                 onShareClick = {},
                 slideUrl = session.asset.slideUrl,
@@ -232,7 +231,7 @@ private fun TimetableItemDetailFloatingMenuExpandedPreview() {
                 expanded = true,
                 isBookmarked = false,
                 onExpandedChange = {},
-                onBookmarkChenged = {},
+                onBookmarkToggle = {},
                 onAddCalendarClick = {},
                 onShareClick = {},
                 slideUrl = session.asset.slideUrl,
