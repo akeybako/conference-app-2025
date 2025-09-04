@@ -496,7 +496,7 @@ extension shared.Profile {
             try FileManager.default.createDirectory(
                 at: profileImagesDirectory, withIntermediateDirectories: true, attributes: nil)
         } catch {
-            print("Failed to create profile images directory: \(error)")
+            print("Failed to create profile images directory at \(profileImagesDirectory.path): \(error)")
             return ""
         }
 
