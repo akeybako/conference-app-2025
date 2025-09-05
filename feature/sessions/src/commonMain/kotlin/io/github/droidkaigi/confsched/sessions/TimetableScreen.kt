@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -66,9 +67,17 @@ fun TimetableScreen(
     modifier: Modifier = Modifier,
 ) {
     val collapsingState = rememberCollapsingHeaderEnterAlwaysState()
-    val lazyListState = rememberLazyListState()
+    val selectedDay = when (uiState.timetable) {
+        is TimetableUiState.GridTimetable -> uiState.timetable.selectedDay
+        is TimetableUiState.ListTimetable -> uiState.timetable.selectedDay
+        else -> DroidKaigi2025Day.ConferenceDay1
+    }
+    val listStates = remember { mutableMapOf<DroidKaigi2025Day, LazyListState>() }
+    val lazyListState = listStates.getOrPut(selectedDay) {
+        LazyListState()
+    }
 
-    val completelyScrolledToTop by remember {
+    val completelyScrolledToTop by remember(selectedDay) {
         derivedStateOf {
             lazyListState.firstVisibleItemIndex == 0 &&
                 lazyListState.firstVisibleItemScrollOffset == 0 &&
@@ -79,12 +88,6 @@ fun TimetableScreen(
     val headerBackgroundColor by animateColorAsState(
         targetValue = if (completelyScrolledToTop) Color.Transparent else MaterialTheme.colorScheme.surface,
     )
-
-    val selectedDay = when (uiState.timetable) {
-        is TimetableUiState.GridTimetable -> uiState.timetable.selectedDay
-        is TimetableUiState.ListTimetable -> uiState.timetable.selectedDay
-        else -> DroidKaigi2025Day.ConferenceDay1
-    }
 
     Scaffold(
         topBar = {
