@@ -10,11 +10,11 @@ struct ProfileUseCaseImpl {
 
         return profileFlow.map { kmpProfile in
             guard let kmpProfile = kmpProfile else {
-                return nil
+                return nil as Model.Profile?
             }
 
             guard let url = URL(string: kmpProfile.link.isEmpty ? "https://example.com" : kmpProfile.link) else {
-                return nil
+                return nil as Model.Profile?
             }
 
             // Load image data from file path
