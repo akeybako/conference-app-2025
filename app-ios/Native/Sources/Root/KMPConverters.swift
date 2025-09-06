@@ -403,12 +403,22 @@ extension shared.KotlinInstant {
 // MARK: - Profile Converters
 
 extension Model.Profile {
-    init?(from shared: shared.ProfileWithImages) {
-        guard let sharedProfile = shared.profile else {
+    init?(from shared: shared.Profile, imageData: Data = Data()) {
+        guard !shared.link.isEmpty, let url = URL(string: shared.link) else {
             return nil
         }
 
-        guard let url = URL(string: sharedProfile.link.isEmpty ? "https://example.com" : sharedProfile.link) else {
+        self.init(
+            name: shared.nickName,
+            occupation: shared.occupation,
+            url: url,
+            image: imageData,
+            cardVariant: Model.ProfileCardVariant(from: shared.theme)
+        )
+    }
+
+    init?(from shared: shared.ProfileWithImages) {
+        guard let sharedProfile = shared.profile else {
             return nil
         }
 
@@ -420,13 +430,7 @@ extension Model.Profile {
             imageData = Data()
         }
 
-        self.init(
-            name: sharedProfile.nickName,
-            occupation: sharedProfile.occupation,
-            url: url,
-            image: imageData,
-            cardVariant: Model.ProfileCardVariant(from: sharedProfile.theme)
-        )
+        self.init(from: sharedProfile, imageData: imageData)
     }
 }
 
@@ -451,28 +455,33 @@ extension Model.ProfileCardVariant {
     }
 }
 
-extension shared.Profile {
-    static func createKmpProfile(from swift: Model.Profile) -> shared.Profile {
-        let theme: shared.ProfileCardTheme
-        switch swift.cardVariant {
+extension shared.ProfileCardTheme {
+    init(from swift: Model.ProfileCardVariant) {
+        switch swift {
         case .nightPill:
-            theme = shared.ProfileCardTheme.darkPill
+            self = .darkPill
         case .dayPill:
-            theme = shared.ProfileCardTheme.lightPill
+            self = .lightPill
         case .nightDiamond:
-            theme = shared.ProfileCardTheme.darkDiamond
+            self = .darkDiamond
         case .dayDiamond:
-            theme = shared.ProfileCardTheme.lightDiamond
+            self = .lightDiamond
         case .nightFlower:
-            theme = shared.ProfileCardTheme.darkFlower
+            self = .darkFlower
         case .dayFlower:
-            theme = shared.ProfileCardTheme.lightFlower
+            self = .lightFlower
         }
+    }
+}
+
+extension shared.Profile {
+    convenience init(from swift: Model.Profile) {
+        let theme = shared.ProfileCardTheme(from: swift.cardVariant)
 
         // Save image data to file and get the path
-        let imagePath = saveImageDataToFile(swift.image)
+        let imagePath = Self.saveImageDataToFile(swift.image)
 
-        return shared.Profile(
+        self.init(
             nickName: swift.name,
             occupation: swift.occupation,
             link: swift.url.absoluteString,
