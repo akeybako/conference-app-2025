@@ -403,7 +403,7 @@ extension shared.KotlinInstant {
 // MARK: - Profile Converters
 
 extension Model.Profile {
-    init?(from shared: shared.Profile, imageData: Data = Data()) {
+    init?(from shared: shared.Profile, imageData: Data) {
         guard !shared.link.isEmpty, let url = URL(string: shared.link) else {
             return nil
         }
