@@ -112,7 +112,6 @@ interface IosAppGraph : AppGraph {
     val settingsRepository: SettingsRepository
     val eventMapRepository: EventMapRepository
     val profileRepository: ProfileRepository
-    val profileDataStore: ProfileDataStore
 
     @Provides
     @ApiBaseUrl

@@ -5,25 +5,11 @@ import shared
 
 struct ProfileUseCaseImpl {
     func load() -> any AsyncSequence<Model.Profile?, Never> {
-        let profileDataStore = KMPDependencyProvider.shared.appGraph.profileDataStore
-        let profileFlow = profileDataStore.getProfileOrNull()
+        let profileRepository = KMPDependencyProvider.shared.appGraph.profileRepository
+        let profileFlow = profileRepository.profileFlow()
 
-        return profileFlow.map { kmpProfile in
-            guard let kmpProfile = kmpProfile else {
-                return nil as Model.Profile?
-            }
-
-            // Load image data from file path - return nil if no valid image data
-            guard !kmpProfile.imagePath.isEmpty else {
-                return nil as Model.Profile?
-            }
-
-            let imageData = loadImageDataFromFile(kmpProfile.imagePath)
-            guard !imageData.isEmpty else {
-                return nil as Model.Profile?
-            }
-
-            return Model.Profile(from: kmpProfile, imageData: imageData)
+        return profileFlow.map { profileWithImages in
+            Model.Profile(from: profileWithImages)
         }
     }
 
