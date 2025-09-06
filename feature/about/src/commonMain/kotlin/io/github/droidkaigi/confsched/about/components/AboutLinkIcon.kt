@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import io.github.droidkaigi.confsched.about.AboutRes
 import io.github.droidkaigi.confsched.about.icon_youtube
-import io.github.droidkaigi.confsched.designsystem.theme.KaigiTheme
+import io.github.droidkaigi.confsched.droidkaigiui.KaigiPreviewContainer
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -60,14 +60,12 @@ fun AboutLinkIcon(
 @Preview
 @Composable
 private fun AboutLinkIconPreview() {
-    KaigiTheme {
-        Surface {
-            AboutLinkIcon(
-                testTag = "testTag",
-                painter = painterResource(AboutRes.drawable.icon_youtube),
-                contentDescription = "YouTube",
-                onClick = {},
-            )
-        }
+    KaigiPreviewContainer {
+        AboutLinkIcon(
+            testTag = "testTag",
+            painter = painterResource(AboutRes.drawable.icon_youtube),
+            contentDescription = "YouTube",
+            onClick = {},
+        )
     }
 }
