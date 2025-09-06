@@ -13,12 +13,14 @@ struct ProfileUseCaseImpl {
                 return nil as Model.Profile?
             }
 
-            // Load image data from file path
-            let imageData: Data
-            if !kmpProfile.imagePath.isEmpty {
-                imageData = loadImageDataFromFile(kmpProfile.imagePath)
-            } else {
-                imageData = Data()
+            // Load image data from file path - return nil if no valid image data
+            guard !kmpProfile.imagePath.isEmpty else {
+                return nil as Model.Profile?
+            }
+
+            let imageData = loadImageDataFromFile(kmpProfile.imagePath)
+            guard !imageData.isEmpty else {
+                return nil as Model.Profile?
             }
 
             return Model.Profile(from: kmpProfile, imageData: imageData)
