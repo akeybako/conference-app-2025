@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -43,6 +44,7 @@ import io.github.droidkaigi.confsched.model.sessions.TimetableItemId
 import io.github.droidkaigi.confsched.model.sessions.TimetableUiType
 import io.github.droidkaigi.confsched.model.sessions.fake
 import io.github.droidkaigi.confsched.sessions.components.TimetableTopAppBar
+import io.github.droidkaigi.confsched.sessions.grid.TimeLine
 import io.github.droidkaigi.confsched.sessions.grid.TimetableGrid
 import io.github.droidkaigi.confsched.sessions.grid.TimetableGridUiState
 import io.github.droidkaigi.confsched.sessions.section.TimetableListUiState
@@ -50,6 +52,7 @@ import io.github.droidkaigi.confsched.sessions.section.TimetableUiState
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.Duration.Companion.hours
 
 private const val ChangeTabDeltaThreshold = 20f
 
@@ -64,9 +67,17 @@ fun TimetableScreen(
     modifier: Modifier = Modifier,
 ) {
     val collapsingState = rememberCollapsingHeaderEnterAlwaysState()
-    val lazyListState = rememberLazyListState()
+    val selectedDay = when (uiState.timetable) {
+        is TimetableUiState.GridTimetable -> uiState.timetable.selectedDay
+        is TimetableUiState.ListTimetable -> uiState.timetable.selectedDay
+        else -> DroidKaigi2025Day.ConferenceDay1
+    }
+    val listStates = remember { mutableMapOf<DroidKaigi2025Day, LazyListState>() }
+    val lazyListState = listStates.getOrPut(selectedDay) {
+        LazyListState()
+    }
 
-    val completelyScrolledToTop by remember {
+    val completelyScrolledToTop by remember(selectedDay) {
         derivedStateOf {
             lazyListState.firstVisibleItemIndex == 0 &&
                 lazyListState.firstVisibleItemScrollOffset == 0 &&
@@ -77,12 +88,6 @@ fun TimetableScreen(
     val headerBackgroundColor by animateColorAsState(
         targetValue = if (completelyScrolledToTop) Color.Transparent else MaterialTheme.colorScheme.surface,
     )
-
-    val selectedDay = when (uiState.timetable) {
-        is TimetableUiState.GridTimetable -> uiState.timetable.selectedDay
-        is TimetableUiState.ListTimetable -> uiState.timetable.selectedDay
-        else -> DroidKaigi2025Day.ConferenceDay1
-    }
 
     Scaffold(
         topBar = {
@@ -143,7 +148,7 @@ fun TimetableScreen(
                     is TimetableUiState.GridTimetable -> {
                         TimetableGrid(
                             timetable = requireNotNull(uiState.timetable.timetableGridUiState[selectedDay]).timetable,
-                            timeLine = null, // TODO
+                            timeLine = uiState.timetable.timeLine,
                             onTimetableItemClick = onTimetableItemClick,
                             selectedDay = selectedDay,
                             contentPadding = WindowInsets.safeDrawingWithBottomNavBar.excludeTop().asPaddingValues(),
@@ -157,8 +162,8 @@ fun TimetableScreen(
                                 orientation = Orientation.Horizontal,
                                 state = rememberDraggableState { delta ->
                                     when (selectedDay) {
-                                        DroidKaigi2025Day.ConferenceDay1 if delta > ChangeTabDeltaThreshold -> onDaySelected(DroidKaigi2025Day.ConferenceDay2)
-                                        DroidKaigi2025Day.ConferenceDay2 if delta < -ChangeTabDeltaThreshold -> onDaySelected(DroidKaigi2025Day.ConferenceDay1)
+                                        DroidKaigi2025Day.ConferenceDay1 if delta < -ChangeTabDeltaThreshold -> onDaySelected(DroidKaigi2025Day.ConferenceDay2)
+                                        DroidKaigi2025Day.ConferenceDay2 if delta > ChangeTabDeltaThreshold -> onDaySelected(DroidKaigi2025Day.ConferenceDay1)
                                         else -> {
                                             // NOOP
                                         }
@@ -250,6 +255,10 @@ private fun TimetableScreenPreview_Grid() {
                         ),
                     ),
                     selectedDay = DroidKaigi2025Day.ConferenceDay1,
+                    timeLine = TimeLine(
+                        currentTime = DroidKaigi2025Day.ConferenceDay1.start + 11.hours,
+                        currentDay = DroidKaigi2025Day.ConferenceDay1,
+                    ),
                 ),
                 uiType = TimetableUiType.Grid,
             ),
