@@ -4,6 +4,7 @@ import Dependencies
 import EventMapFeature
 import FavoriteFeature
 import HomeFeature
+import LicenseFeature
 import Model
 import ProfileCardFeature
 import SearchFeature
@@ -196,8 +197,7 @@ public struct RootScreen: View {
         case .sponsors:
             SponsorScreen()
         case .licenses:
-            Text("Licenses")
-                .navigationTitle("Licenses")
+            LicenseScreen()
         case .settings:
             SettingsScreen()
         }
